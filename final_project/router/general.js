@@ -16,7 +16,8 @@ public_users.post("/register", (req, res) => {
     });
 
     if (userFound == false) {
-      users.push({ username: username, password: password });
+      users.push({ "username": username, "password": password });
+      console.log(users);
       return res.status(200).json({ message: "User created successfully" });
     } else {
       return res.status(400).json({ message: "User already exist" });
@@ -28,7 +29,18 @@ public_users.post("/register", (req, res) => {
 
 // Get the book list available in the shop
 public_users.get("/", function (req, res) {
-  return res.status(300).json({ message: books });
+  let myPromise = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve("Promise Solved");
+    }, 2000);
+  });
+
+  myPromise.then((successMessage) => {
+    console.log(successMessage);
+    return res.status(300).json({ message: books });
+  }).catch((error) => {
+    return res.status(400);
+  });
 });
 
 // Get book details based on ISBN
@@ -36,8 +48,19 @@ public_users.get("/isbn/:isbn", function (req, res) {
   //Write your code here
   const isbn = req.params.isbn;
   if (isbn) {
-    return res.status(300).json({ message: books[isbn] });
-  } else return res.status(400).json({ message: "ISBN didn't founded" });
+    let myPromise = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve("Promise Solved");
+      }, 3000);
+    });
+
+    myPromise.then((successMessage) => {
+      console.log(successMessage);
+      return res.status(300).json({ message: books[isbn] });
+    }).catch((error) => {
+      return res.status(400).json({ message: "ISBN didn't founded" });
+    });
+  } 
 });
 
 // Get book details based on author
@@ -47,11 +70,22 @@ public_users.get("/author/:author", function (req, res) {
   let booksFromAuthor = {};
 
   if (author) {
-    Object.entries(books).forEach((value, key) => {
-      if (value[1].author == author) booksFromAuthor[key] = value;
+    let myPromise = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve("Promise Solved");
+        Object.entries(books).forEach((value, key) => {
+          if (value[1].author == author) booksFromAuthor[key] = value;
+        });
+      }, 3000);
     });
-    return res.status(300).json({ message: booksFromAuthor });
-  } else return res.status(400).json({ message: "Author didn't founded" });
+
+    myPromise.then((successMessage) => {
+      console.log(successMessage);
+      return res.status(300).json({ message: booksFromAuthor });
+    }).catch((error) => {
+      return res.status(400).json({ message: "Author didn't founded" });
+    });
+  } 
 });
 
 // Get all books based on title
@@ -62,11 +96,22 @@ public_users.get("/title/:title", function (req, res) {
   let booksFromTitle = {};
 
   if (title) {
-    Object.entries(books).forEach((value, key) => {
-      if (value[1].title == title) booksFromTitle[key] = value;
+    let myPromise = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve("Promise Solved");
+        Object.entries(books).forEach((value, key) => {
+          if (value[1].title == title) booksFromTitle[key] = value;
+        });
+      }, 3000);
     });
 
-    return res.status(300).json({ message: booksFromTitle });
+    myPromise.then((successMessage) => {
+      console.log(successMessage);
+      return res.status(300).json({ message: booksFromTitle });
+    }).catch((error) => {
+      return res.status(400).json({ message: "Error" });
+    });
+    
   }
 });
 
@@ -74,15 +119,10 @@ public_users.get("/title/:title", function (req, res) {
 public_users.get("/review/:isbn", function (req, res) {
   //Write your code here
   const isbn = req.params.isbn;
-  let bookFromISBN = {};
 
   if (isbn) {
-    Object.entries(books).forEach((value, key) => {
-      if (value[1].reviews == isbn) bookFromISBN[key] = value;
-    });
-
-    if (bookFromISBN.length > 0) {
-      return res.status(300).json({ message: bookFromISBN });
+    if (books[isbn].reviews) {
+      return res.status(300).json({ message: books[isbn].reviews });
     } else {
       return res.status(204).send();
     }
